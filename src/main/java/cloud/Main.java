@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String confPath = System.getenv("ADLTOOLCONFIG");
+        String confPath = System.getenv("CLOUDFSCONFIG");
         Config config = new Config();
         config.importConfig(confPath);
         FileSystemADL adl = new FileSystemADL(config.adl);

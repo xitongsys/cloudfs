@@ -1,0 +1,15 @@
+{
+	"adl":{
+		"clientId":"your client id",
+		"clientKey":"your client key",
+		"endpoint":"your endpoint url",
+		"account":"your account",
+		"currentDirectory":"/"
+	},
+
+	"hdfs":{
+		"server": "webhdfs server:port",
+		"user":"user name",
+		"currentDirectory": "/"
+	}
+}
