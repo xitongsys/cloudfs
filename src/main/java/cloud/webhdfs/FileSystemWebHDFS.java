@@ -78,6 +78,12 @@ public class FileSystemWebHDFS implements FileSystem {
         return config.currentDirectory;
     }
 
+    @Override
+    public String info() throws Exception {
+        Gson gson = new Gson();
+        return gson.toJson(config);
+    }
+
     private void _mv(String p0, String p1) throws Exception {
         String fp0 = getFullPath(p0), ap1 = getAbsolutePath(p1);
         URL url = new URL(fp0 + "?op=RENAME&destination=" + ap1 + "&user.name=" + config.user);

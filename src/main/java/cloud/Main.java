@@ -33,6 +33,9 @@ public class Main {
             if (cmd.equals("cd")) {
                 fs.cd(args[2]);
 
+            }else if(cmd.equals("info")){
+                System.out.println(fs.info());
+
             } else if (cmd.equals("ls")) {
                 String path = na > 2 ? args[2] : "";
                 List<FileEntry> ds = fs.ls(path);

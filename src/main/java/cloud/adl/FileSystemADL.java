@@ -7,6 +7,7 @@ import java.util.*;
 import cloud.utils.FileEntry;
 import cloud.utils.FileSystem;
 import cloud.utils.Path;
+import com.google.gson.Gson;
 import com.microsoft.azure.datalake.store.ADLStoreClient;
 import com.microsoft.azure.datalake.store.DirectoryEntry;
 import com.microsoft.azure.datalake.store.DirectoryEntryType;
@@ -51,6 +52,12 @@ implements FileSystem {
     @Override
     public String pwd() throws Exception {
         return ADLPREFIX + Path.concat(config.account, config.currentDirectory);
+    }
+
+    @Override
+    public String info() throws Exception {
+        Gson gson = new Gson();
+        return gson.toJson(config);
     }
 
     private void _mv(String p0, String p1) throws Exception {

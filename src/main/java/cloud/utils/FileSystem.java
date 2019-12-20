@@ -5,6 +5,7 @@ import java.util.List;
 public interface FileSystem {
     void cd(String path) throws Exception;
     String pwd() throws Exception;
+    String info() throws Exception;
     void mv(String p0, String p1) throws Exception;
     List<Byte> cat(String path) throws Exception;
     List<FileEntry> ls(String path) throws Exception;
