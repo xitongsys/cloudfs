@@ -23,4 +23,19 @@ public class Util {
         }
         return sb.toString();
     }
+
+    public static String size2human(long size){
+        long B = 1L;
+        long KB = 1024L * B;
+        long MB = 1024L * KB;
+        long GB = 1024L * MB;
+        long TB = 1024L * GB;
+
+        String fmt = "%.2f ";
+        if(size < KB) return String.format(fmt + "B", (float)size / (float)B);
+        else if(size < MB) return String.format(fmt + "KB", (float)size / (float)KB);
+        else if(size < GB) return String.format(fmt + "MB", (float)size / (float)MB);
+        else if(size < TB) return String.format(fmt + "GB", (float)size / (float)GB);
+        else return String.format(fmt + "TB", (float)size / (float)TB);
+    }
 }

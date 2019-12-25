@@ -220,15 +220,26 @@ public class FileSystemWebHDFS implements FileSystem {
             con.setUseCaches(false);
             con.setRequestProperty("Content-Type", "application/octet-stream");
 
-            InputStream input = new FileInputStream(localPath);
-            final int _SIZE = input.available();
+            InputStream input = new BufferedInputStream(new FileInputStream(localPath));
+            final long _SIZE = input.available();
             con.setFixedLengthStreamingMode(_SIZE);
             con.connect();
-            OutputStream output = con.getOutputStream();
+            OutputStream output = new BufferedOutputStream(con.getOutputStream());
+            long sendSize = 0;
+            long bt = System.currentTimeMillis();
             while(true){
                 int c = input.read();
                 if(c < 0) break;
                 output.write(c);
+                if(((sendSize+1)*100/_SIZE) != ((sendSize)*100/_SIZE)){
+                    long ct = System.currentTimeMillis();
+                    double speed = ((double)_SIZE)*0.01/(double)((ct - bt)/1000.0);
+                    bt = ct;
+                    String info = String.format("Speed: %s/s  Send: %s(%s%%)", Util.size2human((long)speed), Util.size2human(sendSize+1), (sendSize+1)*100/_SIZE);
+                    System.out.println(info);
+                }
+                sendSize++;
+
             }
             output.close();
 
@@ -272,11 +283,21 @@ public class FileSystemWebHDFS implements FileSystem {
         }
         OutputStream output = new BufferedOutputStream(new FileOutputStream(localPath));
         InputStream input = new BufferedInputStream(in);
-
+        long sendSize = 0;
+        long bt = System.currentTimeMillis();
+        long _SIZE = _getstatus(path).length;
         while(true){
             int c = input.read();
             if(c < 0) break;
             output.write(c);
+            if(((sendSize+1)*100/_SIZE) != ((sendSize)*100/_SIZE)){
+                long ct = System.currentTimeMillis();
+                double speed = ((double)_SIZE)*0.01/(double)((ct - bt)/1000.0);
+                bt = ct;
+                String info = String.format("Speed: %s/s  Recv: %s(%s%%)", Util.size2human((long)speed), Util.size2human(sendSize+1), (sendSize+1)*100/_SIZE);
+                System.out.println(info);
+            }
+            sendSize++;
         }
 
         output.close();

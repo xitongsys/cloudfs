@@ -7,6 +7,7 @@ import java.util.*;
 import cloud.utils.FileEntry;
 import cloud.utils.FileSystem;
 import cloud.utils.Path;
+import cloud.utils.Util;
 import com.google.gson.Gson;
 import com.microsoft.azure.datalake.store.ADLStoreClient;
 import com.microsoft.azure.datalake.store.DirectoryEntry;
@@ -112,6 +113,10 @@ implements FileSystem {
         return fileEntry;
     }
 
+    private FileEntry _getstatus(String path) throws Exception {
+        return directoryEntry2fileEntry(client.getDirectoryEntry(path));
+    }
+
     private List<FileEntry> _ls(String path) throws Exception {
         List<FileEntry> list = new ArrayList<>();
         for(DirectoryEntry entry : client.enumerateDirectory(path)){
@@ -150,10 +155,21 @@ implements FileSystem {
         OutputStream output = new BufferedOutputStream(client.createFile(path, IfExists.OVERWRITE));
         InputStream input = new BufferedInputStream(new FileInputStream(localPath));
 
+        long sendSize = 0;
+        long bt = System.currentTimeMillis();
+        long _SIZE = input.available();
         while(true){
             int c = input.read();
             if(c < 0) break;
             output.write(c);
+            if(((sendSize+1)*100/_SIZE) != ((sendSize)*100/_SIZE)){
+                long ct = System.currentTimeMillis();
+                double speed = ((double)_SIZE)*0.01/(double)((ct - bt)/1000.0);
+                bt = ct;
+                String info = String.format("Speed: %s/s  Send: %s(%s%%)", Util.size2human((long)speed), Util.size2human(sendSize+1), (sendSize+1)*100/_SIZE);
+                System.out.println(info);
+            }
+            sendSize++;
         }
 
         output.close();
@@ -181,11 +197,21 @@ implements FileSystem {
         }
         OutputStream output = new BufferedOutputStream(new FileOutputStream(localPath));
         InputStream input = new BufferedInputStream(client.getReadStream(path));
-
+        long sendSize = 0;
+        long bt = System.currentTimeMillis();
+        long _SIZE = _getstatus(path).length;
         while(true){
             int c = input.read();
             if(c < 0) break;
             output.write(c);
+            if(((sendSize+1)*100/_SIZE) != ((sendSize)*100/_SIZE)){
+                long ct = System.currentTimeMillis();
+                double speed = ((double)_SIZE)*0.01/(double)((ct - bt)/1000.0);
+                bt = ct;
+                String info = String.format("Speed: %s/s  Recv: %s(%s%%)", Util.size2human((long)speed), Util.size2human(sendSize+1), (sendSize+1)*100/_SIZE);
+                System.out.println(info);
+            }
+            sendSize++;
         }
 
         output.close();

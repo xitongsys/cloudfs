@@ -10,7 +10,7 @@ public class FormatterOutput {
         System.out.format(format, "Mode", "Owner", "Type", "Size", "LastModifiedTime", "Name");
         System.out.println("");
         for(FileEntry d : ds){
-            System.out.format(format, d.permission, d.owner, d.type, d.length, d.lastModifiedTime, d.name);
+            System.out.format(format, d.permission, d.owner, d.type, Util.size2human(d.length), d.lastModifiedTime, d.name);
         }
     }
 
